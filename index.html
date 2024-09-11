@@ -1,75 +1,134 @@
 <!DOCTYPE html>
+
+<!-- Bác tìm kiếm gì ở đây? -->
+<!-- Bác tìm kiếm gì ở đây? -->
+<!-- Bác tìm kiếm gì ở đây? -->
+<!-- Bác tìm kiếm gì ở đây? -->
+
 <html>
 <head>
-    <title>ProMax Config Web BLE App</title>
+    <title>Cài đặt ProMax</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- <link rel="icon" type="image/png" href="favicon.ico"> -->
-    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
     <meta charset="UTF-8">
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 <body>
     <div class="topnav">
-        <h1>ProMax Config Application</h1>
+        <h1>Cài đặt ProMax</h1>
     </div>
     <div class="content">
-        <div class="card-grid">
-            <div class="card">
-                <p>
-                    <button id="connectBleButton" class="connectButton"> Connect to ProMax Device</button>
-                    <button id="disconnectBleButton" class="disconnectButton"> Disconnect ProMax Device</button>
-                </p>
-                <p class="gray-label">BLE state: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
-            </div>
-        </div>
-       
-      <!--   <div class="card-grid">   
-            <div class="card">
-                <h2>Fetched Value</h2>
-                <p class="reading"><span id="valueContainer">NaN</span></p>
-                <p class="gray-label">Last reading: <span id="timestamp"></span></p>
-            </div>
-
-            <div class="card">
-                <h2>Control GPIO 2</h2>
-                <button id="onButton" class="onButton">ON</button>
-                <button id="offButton" class="offButton">OFF</button>
-                <p class="gray-label">Last value sent: <span id="valueSent"></span></p>
-            </div>
-        </div>
+        <p>
+            <button id="connectBleButton" class="connectButton"> Kết nối ProMax </button>
+            <button id="disconnectBleButton" class="disconnectButton"> Ngắt kết nối ProMax </button>
+        </p>
+        <p class="gray-label">Trạng thái kết nối: <strong><span id="bleState" style="color:#d13a30;">Không kết nối</span></strong></p>
+   
     </div>
-    <div class="footer">
-        <p><a href="https://randomnerdtutorials.com/">Created by RandomNerdTutorials.com</a></p>
-        <p><a href="https://RandomNerdTutorials.com/esp32-web-bluetooth/">Read the full project here.</a></p>
-    </div> -->
+    
+    <div id="configBlock" style="display: none;">
+    <p>
+        <p>
+            Sửa giá trị mặc định trong bảng dưới rồi ấn <b>Gửi</b>
+        </p>
+        <table>
+            <tr>
+                <td>Xoay màn hình</td>
+                <td>
+                    <select id="display_rotation" onchange="updateConfig()">
+                        <option value="0">0 (cổng sạc bên trên)</option>
+                        <option value="1">1 (cổng sạc bên trái)</option>
+                        <option value="2">2 (cổng sạc bên dưới)</option>
+                        <option value="3">3 (cổng sạc bên phải)</option>
+                        <option value="4">4 (ảnh ngược, cổng sạc ở trên)</option>
+                        <option value="5">5 (ảnh ngược, cổng sạc bên trái)</option>
+                        <option value="6">6 (ảnh ngược, cổng sạc bên dưới)</option>
+                        <option value="7">7 (ảnh ngược, cổng sạc bên phải)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Ẩn hiện đồng hồ</td>
+                <td>
+                    <select id="show_clock" onchange="updateConfig()">
+                        <option value="1">1 (Hiện)</option>
+                        <option value="0">0 (Ẩn)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Mầu LED cảnh báo</td>
+                <td>
+                    <input type="color" id="led_color" onchange="updateConfig()">
+                </td>
+            </tr>
 
+            <tr>
+                <td>Độ sáng LED cảnh báo</td>
+                <td>
+                    <input type="range" id="led_brightness" min="0" max="10" oninput="updateConfig()">
+                </td>
+            </tr>
 
-<input size="51" type="text" id="myText" value="DTBK;display_rotation=1">
-<br>
-<button onclick="myFunction()">Send</button>
-
+            <tr>
+                <td>Chữ hiện trên màn hình</td>
+                <td>
+                    <input type="text" id="logo_text" maxlength="7" onchange="updateConfig()">
+                </td>
+            </tr>
+            
+            <tr>
+                <td>Cảnh báo tốc độ trễ </td>
+                <td>
+                    <input type="number" id="speed_limit_offset" min="0" onchange="updateConfig()">
+                </td>
+            </tr>
+        </table>    
+        <p>
+            <button onclick="myFunction()">Gửi</button> <strong><span id="sendState" style="color:#24af37;"></span></strong>
+        </p>
+        <p>
+            <input type="text" size="110"  id="configOutput" readonly style="display: block;">
+        </p>
+        
+    </p>
+</div>
 </body>
+
 <script>
     // DOM Elements
     const connectButton = document.getElementById('connectBleButton');
     const disconnectButton = document.getElementById('disconnectBleButton');
-    const onButton = document.getElementById('onButton');
-    const offButton = document.getElementById('offButton');
-    const retrievedValue = document.getElementById('valueContainer');
-    const latestValueSent = document.getElementById('valueSent');
     const bleStateContainer = document.getElementById('bleState');
-    const timestampContainer = document.getElementById('timestamp');
 
+    const brightnessSlider = document.getElementById('led_brightness');
+    const brightnessValue = document.getElementById('brightness_value');
+    const configBlock = document.getElementById('configBlock');
+
+    const configOutput = document.getElementById("configOutput");
+    
     //Define BLE Device Specs
     var deviceName ='VIETMAP_HUD';
     var bleService = '0000fff0-0000-1000-8000-00805f9b34fb';
-    var ledCharacteristic = '0000fff2-0000-1000-8000-00805f9b34fb';
-    var sensorCharacteristic= '0000fff1-0000-1000-8000-00805f9b34fb';
+    var configCharacteristic = '0000fff2-0000-1000-8000-00805f9b34fb';
 
+    var deviceInfoService = '0000180a-0000-1000-8000-00805f9b34fb';
+    var firmwareRevisionCharacteristic = '00002a26-0000-1000-8000-00805f9b34fb';
 
     //Global Variables to Handle Bluetooth
     var bleServer;
-    var bleServiceFound;
-    var sensorCharacteristicFound;
+
+    var defaultConfig = 'DTBK;display_rotation=2;show_clock=1;led_color=0xff0000;led_brightness=9;logo_text=VIETMAP;speed_limit_offset=0';
 
     // Connect Button (search for BLE Devices only if BLE is available)
     connectButton.addEventListener('click', (event) => {
@@ -81,59 +140,54 @@
     // Disconnect Button
     disconnectButton.addEventListener('click', disconnectDevice);
 
-    // Write to the ESP32 LED Characteristic
-    onButton.addEventListener('click', () => writeOnCharacteristic(1));
-    offButton.addEventListener('click', () => writeOnCharacteristic(0));
 
     // Check if BLE is available in your Browser
     function isWebBluetoothEnabled() {
         if (!navigator.bluetooth) {
             console.log('Web Bluetooth API is not available in this browser!');
-            bleStateContainer.innerHTML = "Web Bluetooth API is not available in this browser/device!";
+            bleStateContainer.innerHTML = "Trình duyệt này (thiết bị này) không hỗ trợ!<br> (Thử mở trang này bằng máy tính và trình duyệt Chrome)";
             return false
         }
         console.log('Web Bluetooth API supported in this browser.');
         return true
     }
 
-    // Connect to BLE Device and Enable Notifications
+    // Connect to BLE Device and Get firmware revision
     function connectToDevice(){
         console.log('Initializing Bluetooth...');
         navigator.bluetooth.requestDevice({
             filters: [{name: deviceName}],
-            optionalServices: [bleService]
+            optionalServices: [bleService,deviceInfoService]
         })
         .then(device => {
             console.log('Device Selected:', device.name);
-            bleStateContainer.innerHTML = 'Connected to device ' + device.name;
-            bleStateContainer.style.color = "#24af37";
+            bleStateContainer.innerHTML = 'Đang kết nối với ProMax ';
+            bleStateContainer.style.color = "#242237";
             device.addEventListener('gattservicedisconnected', onDisconnected);
             return device.gatt.connect();
         })
         .then(gattServer =>{
             bleServer = gattServer;
             console.log("Connected to GATT Server");
-            return bleServer.getPrimaryService(bleService);
+            return bleServer.getPrimaryService(deviceInfoService);
         })
         .then(service => {
-            bleServiceFound = service;
-            console.log("Service discovered:", service.uuid);
-            return service.getCharacteristic(sensorCharacteristic);
+            console.log("Try to get characteristic");
+            return service.getCharacteristic(firmwareRevisionCharacteristic);
         })
-        // .then(characteristic => {
-        //     console.log("Characteristic discovered:", characteristic.uuid);
-        //     sensorCharacteristicFound = characteristic;
-        //     characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
-        //     characteristic.startNotifications();
-        //     console.log("Notifications Started.");
-        //     return characteristic.readValue();
-        // })
-        // .then(value => {
-        //     console.log("Read value: ", value);
-        //     const decodedValue = new TextDecoder().decode(value);
-        //     console.log("Decoded value: ", decodedValue);
-        //     retrievedValue.innerHTML = decodedValue;            
-        // })
+        .then(characteristic => {
+            console.log("Try to read revision value");
+            return characteristic.readValue();
+        })
+        .then(value => {
+            console.log("Read value: ", value);
+            const decodedValue = new TextDecoder().decode(value);
+            bleStateContainer.style.color = "#24af37";
+            bleStateContainer.innerHTML = 'Đã kết nối với ProMax (' + decodedValue + ')';
+            configBlock.style.display = "block";
+            console.log("Decoded value: ", decodedValue);
+            parseData();
+        })
         .catch(error => {
             console.log('Error: ', error);
         })
@@ -141,108 +195,83 @@
 
     function onDisconnected(event){
         console.log('Device Disconnected:', event.target.device.name);
-        bleStateContainer.innerHTML = "Device disconnected";
+        bleStateContainer.innerHTML = "Không kết nối";
         bleStateContainer.style.color = "#d13a30";
 
         connectToDevice();
     }
 
-    function handleCharacteristicChange(event){
-        const newValueReceived = new TextDecoder().decode(event.target.value);
-        console.log("Characteristic value changed: ", newValueReceived);
-        retrievedValue.innerHTML = newValueReceived;
-        timestampContainer.innerHTML = getDateTime();
-    }
-
-    function writeOnCharacteristic(value){
-        if (bleServer && bleServer.connected) {
-            bleServiceFound.getCharacteristic(ledCharacteristic)
-            .then(characteristic => {
-                console.log("Found the LED characteristic: ", characteristic.uuid);
-                var string = "DTBK;display_rotation=0";
-                const data = Uint8Array.from(string.split("").map(x => x.charCodeAt()))
-                return characteristic.writeValue(data);
-            })
-            .then(() => {
-                latestValueSent.innerHTML = value;
-                console.log("Value written to LEDcharacteristic:", value);
-            })
-            .catch(error => {
-                console.error("Error writing to the LED characteristic: ", error);
-            });
-        } else {
-            console.error ("Bluetooth is not connected. Cannot write to characteristic.")
-            window.alert("Bluetooth is not connected. Cannot write to characteristic. \n Connect to BLE first!")
-        }
-    }
-
     function myFunction() {
          if (bleServer && bleServer.connected) {
-            bleServiceFound.getCharacteristic(ledCharacteristic)
+            bleServer.getPrimaryService(bleService)
+            .then (bleServiceFound => {
+                return bleServiceFound.getCharacteristic(configCharacteristic);
+            }) 
             .then(characteristic => {
-                console.log("Found the LED characteristic: ", characteristic.uuid);
-                var string = document.getElementById("myText").value;
+                console.log("Found the characteristic: ", characteristic.uuid);
+                var string = document.getElementById("configOutput").value;
                 const data = Uint8Array.from(string.split("").map(x => x.charCodeAt()))
-                return characteristic.writeValue(data);
+                return characteristic.writeValueWithoutResponse(data);
             })
-            .then(() => {
-                latestValueSent.innerHTML = value;
-                console.log("Value written to LEDcharacteristic:", value);
-            })
+            .then (_ => {
+                sendState.innerHTML = 'Đã gửi! Reload sau 3s';
+                setTimeout(() => window.location.reload(), 3000);
+            }) 
             .catch(error => {
-                console.error("Error writing to the LED characteristic: ", error);
+                console.error("Error writing to the characteristic: ", error);
             });
         } else {
             console.error ("Bluetooth is not connected. Cannot write to characteristic.")
-            window.alert("Bluetooth is not connected. Cannot write to characteristic. \n Connect to BLE first!")
+            window.alert("Chưa kết nối với ProMax nên không thể gửi lệnh. \nHãy kết nối với ProMax!")
         }
     }
 
     function disconnectDevice() {
         console.log("Disconnect Device.");
         if (bleServer && bleServer.connected) {
-            // if (sensorCharacteristicFound) {
-            //     sensorCharacteristicFound.stopNotifications()
-            //         .then(() => {
-            //             console.log("Notifications Stopped");
-            //             return bleServer.disconnect();
-            //         })
-            //         .then(() => {
-            //             console.log("Device Disconnected");
-            //             bleStateContainer.innerHTML = "Device Disconnected";
-            //             bleStateContainer.style.color = "#d13a30";
-
-            //         })
-            //         .catch(error => {
-            //             console.log("An error occurred:", error);
-            //         });
-            // } else {
-            //     console.log("No characteristic found to disconnect.");
-            // }
             bleServer.disconnect();
             console.log("Device Disconnected");
-            bleStateContainer.innerHTML = "Device Disconnected";
+            bleStateContainer.innerHTML = "Không kết nối";
             bleStateContainer.style.color = "#d13a30";
+            configBlock.style.display = "none";
         } else {
             // Throw an error if Bluetooth is not connected
             console.error("Bluetooth is not connected.");
-            window.alert("Bluetooth is not connected.")
+            window.alert("Chưa kết nối với thiết bị Bluetooth.")
         }
     }
 
-    function getDateTime() {
-        var currentdate = new Date();
-        var day = ("00" + currentdate.getDate()).slice(-2); // Convert day to string and slice
-        var month = ("00" + (currentdate.getMonth() + 1)).slice(-2);
-        var year = currentdate.getFullYear();
-        var hours = ("00" + currentdate.getHours()).slice(-2);
-        var minutes = ("00" + currentdate.getMinutes()).slice(-2);
-        var seconds = ("00" + currentdate.getSeconds()).slice(-2);
-        
-        var datetime = day + "/" + month + "/" + year + " at " + hours + ":" + minutes + ":" + seconds;
-        return datetime;
+    function updateConfig() {
+        var ledColor = document.getElementById("led_color").value.replace("#", "0x");
+        var configString = "DTBK;display_rotation=" + document.getElementById("display_rotation").value +
+                           ";show_clock=" + document.getElementById("show_clock").value +
+                           ";led_color=" + ledColor +
+                           ";led_brightness=" + document.getElementById("led_brightness").value +
+                           ";logo_text=" + document.getElementById("logo_text").value +
+                           ";speed_limit_offset=" + document.getElementById("speed_limit_offset").value;
+
+        configOutput.value = configString;
+        // configOutput.style.display = "block";
     }
 
+    function parseData() {
+        configOutput.value = defaultConfig;
+        var currentSetting = configOutput.value;
+        currentSetting.split(';').forEach(function (value) {
+            var keypair = value.split('=');
+            console.log("key = " + keypair[0] + " value = " + keypair[1]);
+
+            var element = document.getElementById(keypair[0]);
+            if (typeof(element) != 'undefined' && element != null) {
+                if (keypair[0] == 'led_color') {
+                    element.value = keypair[1].replace("0x", "#");
+                } else {
+                    element.value = keypair[1];    
+                }    
+            }
+        });
+
+    }
 
 </script>
 
