@@ -67,6 +67,15 @@
                 </td>
             </tr>
             <tr>
+                <td>Ẩn hiện chữ "km/h"</td>
+                <td>
+                    <select id="show_text_kmh" onchange="updateConfig()">
+                        <option value="1">1 (Hiện)</option>
+                        <option value="0">0 (Ẩn)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
                 <td>Mầu LED cảnh báo</td>
                 <td>
                     <input type="color" id="led_color" onchange="updateConfig()">
@@ -93,12 +102,19 @@
                     <input type="number" id="speed_limit_offset" min="0" onchange="updateConfig()">
                 </td>
             </tr>
+
+            <tr>
+                <td>Dòng chữ khi khởi động </td>
+                <td>
+                    <input type="text" id="welcome_text" onchange="updateConfig()">
+                </td>
+            </tr>
         </table>    
         <p>
             <button onclick="myFunction()">Gửi</button> <strong><span id="sendState" style="color:#24af37;"></span></strong>
         </p>
         <p>
-            <input type="text" size="110"  id="configOutput" readonly style="display: block;">
+            <input type="text" size="140"  id="configOutput" readonly style="display: block;">
         </p>
         
     </p>
@@ -128,7 +144,7 @@
     //Global Variables to Handle Bluetooth
     var bleServer;
 
-    var defaultConfig = 'DTBK;display_rotation=2;show_clock=1;led_color=0xff0000;led_brightness=9;logo_text=VIETMAP;speed_limit_offset=0';
+    var defaultConfig = 'DTBK;display_rotation=2;show_clock=1;led_color=0xff0000;led_brightness=9;logo_text=VIETMAP;speed_limit_offset=0;welcome_text=;show_text_kmh=1';
 
     // Connect Button (search for BLE Devices only if BLE is available)
     connectButton.addEventListener('click', (event) => {
@@ -248,7 +264,9 @@
                            ";led_color=" + ledColor +
                            ";led_brightness=" + document.getElementById("led_brightness").value +
                            ";logo_text=" + document.getElementById("logo_text").value +
-                           ";speed_limit_offset=" + document.getElementById("speed_limit_offset").value;
+                           ";speed_limit_offset=" + document.getElementById("speed_limit_offset").value +
+                           ";welcome_text=" + document.getElementById("welcome_text").value +
+                           ";show_text_kmh=" + document.getElementById("show_text_kmh").value;
 
         configOutput.value = configString;
         // configOutput.style.display = "block";
