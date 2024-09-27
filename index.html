@@ -39,7 +39,7 @@
     <div id="configBlock" style="display: none;">
     <p>
         <p>
-            Sửa giá trị mặc định trong bảng dưới rồi ấn <b>Gửi</b>
+            Sửa giá trị trong bảng dưới rồi ấn <b>Gửi</b>
         </p>
         <table>
             <tr>
@@ -137,6 +137,7 @@
     var deviceName ='VIETMAP_HUD';
     var bleService = '0000fff0-0000-1000-8000-00805f9b34fb';
     var configCharacteristic = '0000fff2-0000-1000-8000-00805f9b34fb';
+    var sensorCharacteristic = '0000fff1-0000-1000-8000-00805f9b34fb';
 
     var deviceInfoService = '0000180a-0000-1000-8000-00805f9b34fb';
     var firmwareRevisionCharacteristic = '00002a26-0000-1000-8000-00805f9b34fb';
@@ -199,10 +200,11 @@
             console.log("Read value: ", value);
             const decodedValue = new TextDecoder().decode(value);
             bleStateContainer.style.color = "#24af37";
-            bleStateContainer.innerHTML = 'Đã kết nối với ProMax (' + decodedValue + ')';
+            bleStateContainer.innerHTML = 'Đã kết nối với ProMax ' + decodedValue;
             configBlock.style.display = "block";
             console.log("Decoded value: ", decodedValue);
             parseData();
+            loadCurrentConfig();
         })
         .catch(error => {
             console.log('Error: ', error);
@@ -215,6 +217,49 @@
         bleStateContainer.style.color = "#d13a30";
 
         connectToDevice();
+    }
+
+    function loadCurrentConfig() {
+        if (bleServer && bleServer.connected) {
+            bleServer.getPrimaryService(bleService)
+            .then (service => {
+                return service.getCharacteristic(sensorCharacteristic);
+            })
+            .then(characteristic => {
+                console.log("Characteristic discovered:", characteristic.uuid);
+                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);            
+                characteristic.startNotifications();
+            })
+            .catch(error => {
+                console.error("Error: ", error);
+            });
+
+
+            bleServer.getPrimaryService(bleService)
+            .then (bleServiceFound => {
+                return bleServiceFound.getCharacteristic(configCharacteristic);
+            }) 
+            .then(characteristic => {
+                console.log("Found the characteristic: ", characteristic.uuid);
+                var string = "LOAD";
+                const data = Uint8Array.from(string.split("").map(x => x.charCodeAt()))
+                return characteristic.writeValueWithoutResponse(data);
+            })   
+            .catch(error => {
+                console.error("Error writing to the characteristic: ", error);
+            });
+        } else {
+            console.error ("Bluetooth is not connected. Cannot write to characteristic.")
+        }
+    }
+
+    function handleCharacteristicChange(event){
+        const newValueReceived = new TextDecoder().decode(event.target.value);
+        console.log("Current config value: ", newValueReceived);
+        if (newValueReceived != "") {
+            defaultConfig = newValueReceived;
+            parseData();    
+        }
     }
 
     function myFunction() {
