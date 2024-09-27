@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<!-- Bác tìm kiếm gì ở đây? -->
+<!-- Bác tìm kiếm gì ở đây? -->
+<!-- Bác tìm kiếm gì ở đây? -->
+<!-- Bác tìm kiếm gì ở đây? -->
+
+<html>
+<head>
+    <title>Cài đặt BaoDiem</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+    <div class="topnav">
+        <h1>Cài đặt BaoDiem</h1>
+    </div>
+    <div class="content">
+        <p>
+            <button id="connectBleButton" class="connectButton"> Kết nối BaoDiem </button>
+            <button id="disconnectBleButton" class="disconnectButton"> Ngắt kết nối BaoDiem </button>
+        </p>
+        <p class="gray-label">Trạng thái kết nối: <strong><span id="bleState" style="color:#d13a30;">Không kết nối</span></strong></p>
+   
+    </div>
+    
+    <div id="configBlock" style="display: none;">
+        <p>
+            <p>
+                Sửa giá trị trong bảng dưới rồi ấn <b>Gửi</b>
+            </p>
+            <table>
+                <tr>
+                    <td>Thời gian thức (giây) </td>
+                    <td>
+                        <input type="number" id="awake_duration" min="0" onchange="updateConfig()">
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Thời gian ngủ (giây) </td>
+                    <td>
+                        <input type="number" id="sleep_duration" min="0" onchange="updateConfig()">
+                    </td>
+                </tr>
+            </table>    
+            <p>
+                <button onclick="myFunction()">Gửi</button> <strong><span id="sendState" style="color:#24af37;"></span></strong>
+            </p>
+            <p>
+                <input type="text" size="45"  id="configOutput" readonly style="display: block;">
+            </p>    
+        </p>
+    </div>
+</body>
+
+<script>
+    // DOM Elements
+    const connectButton = document.getElementById('connectBleButton');
+    const disconnectButton = document.getElementById('disconnectBleButton');
+    const bleStateContainer = document.getElementById('bleState');
+
+    const brightnessSlider = document.getElementById('led_brightness');
+    const brightnessValue = document.getElementById('brightness_value');
+    const configBlock = document.getElementById('configBlock');
+
+    const configOutput = document.getElementById("configOutput");
+    
+    //Define BLE Device Specs
+    var deviceName ='VIETMAP_HUD';
+    var bleService = '0000fff0-0000-1000-8000-00805f9b34fb';
+    var configCharacteristic = '0000fff2-0000-1000-8000-00805f9b34fb';
+    var sensorCharacteristic = '0000fff1-0000-1000-8000-00805f9b34fb';
+
+    var deviceInfoService = '0000180a-0000-1000-8000-00805f9b34fb';
+    var firmwareRevisionCharacteristic = '00002a26-0000-1000-8000-00805f9b34fb';
+
+    //Global Variables to Handle Bluetooth
+    var bleServer;
+
+    var defaultConfig = 'DTBK;awake_duration=5;sleep_duration=1800';
+
+    // Connect Button (search for BLE Devices only if BLE is available)
+    connectButton.addEventListener('click', (event) => {
+        if (isWebBluetoothEnabled()){
+            connectToDevice();
+        }
+    });
+
+    // Disconnect Button
+    disconnectButton.addEventListener('click', disconnectDevice);
+
+
+    // Check if BLE is available in your Browser
+    function isWebBluetoothEnabled() {
+        if (!navigator.bluetooth) {
+            console.log('Web Bluetooth API is not available in this browser!');
+            bleStateContainer.innerHTML = "Trình duyệt này (thiết bị này) không hỗ trợ!<br> (Thử mở trang này bằng máy tính và trình duyệt Chrome)";
+            return false
+        }
+        console.log('Web Bluetooth API supported in this browser.');
+        return true
+    }
+
+    // Connect to BLE Device and Get firmware revision
+    function connectToDevice(){
+        console.log('Initializing Bluetooth...');
+        navigator.bluetooth.requestDevice({
+            filters: [{name: deviceName}],
+            optionalServices: [bleService,deviceInfoService]
+        })
+        .then(device => {
+            console.log('Device Selected:', device.name);
+            bleStateContainer.innerHTML = 'Đang kết nối với HUD BaoDiem';
+            bleStateContainer.style.color = "#242237";
+            device.addEventListener('gattservicedisconnected', onDisconnected);
+            return device.gatt.connect();
+        })
+        .then(gattServer =>{
+            bleServer = gattServer;
+            console.log("Connected to GATT Server");
+            return bleServer.getPrimaryService(deviceInfoService);
+        })
+        .then(service => {
+            console.log("Try to get characteristic");
+            return service.getCharacteristic(firmwareRevisionCharacteristic);
+        })
+        .then(characteristic => {
+            console.log("Try to read revision value");
+            return characteristic.readValue();
+        })
+        .then(value => {
+            console.log("Read value: ", value);
+            const decodedValue = new TextDecoder().decode(value);
+            bleStateContainer.style.color = "#24af37";
+            bleStateContainer.innerHTML = 'Đã kết nối với HUD BaoDiem ' + decodedValue;
+            configBlock.style.display = "block";
+            console.log("Decoded value: ", decodedValue);
+            parseData();
+            loadCurrentConfig();
+        })
+        .catch(error => {
+            console.log('Error: ', error);
+        })
+    }
+
+    function onDisconnected(event){
+        console.log('Device Disconnected:', event.target.device.name);
+        bleStateContainer.innerHTML = "Không kết nối";
+        bleStateContainer.style.color = "#d13a30";
+
+        connectToDevice();
+    }
+
+    function loadCurrentConfig() {
+        if (bleServer && bleServer.connected) {
+            bleServer.getPrimaryService(bleService)
+            .then (service => {
+                return service.getCharacteristic(sensorCharacteristic);
+            })
+            .then(characteristic => {
+                console.log("Characteristic discovered:", characteristic.uuid);
+                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);            
+                characteristic.startNotifications();
+            })
+            .catch(error => {
+                console.error("Error: ", error);
+            });
+
+
+            bleServer.getPrimaryService(bleService)
+            .then (bleServiceFound => {
+                return bleServiceFound.getCharacteristic(configCharacteristic);
+            }) 
+            .then(characteristic => {
+                console.log("Found the characteristic: ", characteristic.uuid);
+                var string = "LOAD";
+                const data = Uint8Array.from(string.split("").map(x => x.charCodeAt()))
+                return characteristic.writeValueWithoutResponse(data);
+            })   
+            .catch(error => {
+                console.error("Error writing to the characteristic: ", error);
+            });
+        } else {
+            console.error ("Bluetooth is not connected. Cannot write to characteristic.")
+        }
+    }
+
+    function handleCharacteristicChange(event){
+        const newValueReceived = new TextDecoder().decode(event.target.value);
+        console.log("Current config value: ", newValueReceived);
+        if (newValueReceived != "") {
+            defaultConfig = newValueReceived;
+            parseData();    
+        }
+    }
+
+    function myFunction() {
+         if (bleServer && bleServer.connected) {
+            bleServer.getPrimaryService(bleService)
+            .then (bleServiceFound => {
+                return bleServiceFound.getCharacteristic(configCharacteristic);
+            }) 
+            .then(characteristic => {
+                console.log("Found the characteristic: ", characteristic.uuid);
+                var string = document.getElementById("configOutput").value;
+                const data = Uint8Array.from(string.split("").map(x => x.charCodeAt()))
+                return characteristic.writeValueWithoutResponse(data);
+            })
+            .then (_ => {
+                sendState.innerHTML = 'Đã gửi! Reload sau 3s';
+                setTimeout(() => window.location.reload(), 3000);
+            }) 
+            .catch(error => {
+                console.error("Error writing to the characteristic: ", error);
+            });
+        } else {
+            console.error ("Bluetooth is not connected. Cannot write to characteristic.")
+            window.alert("Chưa kết nối với BaoDiem nên không thể gửi lệnh. \nHãy kết nối với BaoDiem!")
+        }
+    }
+
+    function disconnectDevice() {
+        console.log("Disconnect Device.");
+        if (bleServer && bleServer.connected) {
+            bleServer.disconnect();
+            console.log("Device Disconnected");
+            bleStateContainer.innerHTML = "Không kết nối";
+            bleStateContainer.style.color = "#d13a30";
+            configBlock.style.display = "none";
+        } else {
+            // Throw an error if Bluetooth is not connected
+            console.error("Bluetooth is not connected.");
+            window.alert("Chưa kết nối với thiết bị Bluetooth.")
+        }
+    }
+
+    function updateConfig() {
+        var configString = "DTBK;awake_duration=" + document.getElementById("awake_duration").value +
+                           ";sleep_duration=" + document.getElementById("sleep_duration").value;
+
+        configOutput.value = configString;
+        // configOutput.style.display = "block";
+    }
+
+    function parseData() {
+        configOutput.value = defaultConfig;
+        var currentSetting = configOutput.value;
+        currentSetting.split(';').forEach(function (value) {
+            var keypair = value.split('=');
+            console.log("key = " + keypair[0] + " value = " + keypair[1]);
+
+            var element = document.getElementById(keypair[0]);
+            if (typeof(element) != 'undefined' && element != null) {
+                if (keypair[0] == 'led_color') {
+                    element.value = keypair[1].replace("0x", "#");
+                } else {
+                    element.value = keypair[1];    
+                }    
+            }
+        });
+
+    }
+
+</script>
+
+</html>
