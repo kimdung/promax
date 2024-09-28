@@ -109,13 +109,44 @@
                     <input type="text" id="welcome_text" onchange="updateConfig()">
                 </td>
             </tr>
+        </table>
+
+        <p>
+           
+        </p>
+        <table>
+            <tr>
+                <td>Kết nối đầu đọc obd vgate icar pro 4.0 <br>Chỉ bật khi có đầu đọc</td>
+                <td>
+                    <select id="obd_scan_duration" onchange="updateConfig()">
+                        <option value="0">0 (Tắt)</option>
+                        <option value="5">5 (Bật)</option>                
+                    </select>
+                </td>
+            </tr>
+           <tr style="display: none;>
+                <td>Tự ngủ sau khi có kết nối (giây) </td>
+                <td>
+                    <input type="number" id="awake_duration" min="0" onchange="updateConfig()">
+                </td>
+            </tr>
+            <tr style="display: none;>
+                <td>Thời gian ngủ (giây) </td>
+                <td>
+                    <input type="number" id="sleep_duration" min="0" onchange="updateConfig()">
+                </td>
+            </tr>
         </table>    
+        
         <p>
             <button onclick="myFunction()">Gửi</button> <strong><span id="sendState" style="color:#24af37;"></span></strong>
         </p>
         <p>
             <input type="text" size="140"  id="configOutput" readonly style="display: block;">
         </p>
+
+        
+        
         
     </p>
 </div>
@@ -145,7 +176,10 @@
     //Global Variables to Handle Bluetooth
     var bleServer;
 
-    var defaultConfig = 'DTBK;display_rotation=2;show_clock=1;led_color=0xff0000;led_brightness=9;logo_text=VIETMAP;speed_limit_offset=0;welcome_text=;show_text_kmh=1';
+    var defaultConfig = 'DTBK;display_rotation=2;show_clock=1;led_color=0xff0000;led_brightness=9;logo_text=VIETMAP;speed_limit_offset=0;welcome_text=;show_text_kmh=1' +
+                        'obd_scan_duration=0;' +
+                        'awake_duration=0;' +
+                        'sleep_duration=0';
 
     // Connect Button (search for BLE Devices only if BLE is available)
     connectButton.addEventListener('click', (event) => {
@@ -311,7 +345,10 @@
                            ";logo_text=" + document.getElementById("logo_text").value +
                            ";speed_limit_offset=" + document.getElementById("speed_limit_offset").value +
                            ";welcome_text=" + document.getElementById("welcome_text").value +
-                           ";show_text_kmh=" + document.getElementById("show_text_kmh").value;
+                           ";show_text_kmh=" + document.getElementById("show_text_kmh").value +
+                           ";obd_scan_duration=" + document.getElementById("obd_scan_duration").value +
+                           ";awake_duration=" + document.getElementById("awake_duration").value +
+                           ";sleep_duration=" + document.getElementById("sleep_duration").value;
 
         configOutput.value = configString;
         // configOutput.style.display = "block";
