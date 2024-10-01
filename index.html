@@ -99,6 +99,13 @@
             </tr>
 
             <tr>
+                <td>Độ sáng màn hình khi trời tối</td>
+                <td>
+                    <input type="range" id="night_brightness" min="0" max="10" oninput="updateConfig()">
+                </td>
+            </tr>
+
+            <tr>
                 <td>Chữ hiện trên màn hình</td>
                 <td>
                     <input type="text" id="logo_text" maxlength="7" onchange="updateConfig()">
@@ -187,6 +194,7 @@
 
     var defaultConfig = 'DTBK;display_rotation=2;show_clock=1;led_color=0xff0000;led_brightness=9;logo_text=MAPVIET;speed_limit_offset=0;welcome_text=;show_text_kmh=1' +
                         ';obd_scan_duration=0' +
+                        ';night_brightness=5' +
                         ';show_number_marker=1' +
                         ';awake_duration=0;' +
                         ';sleep_duration=0';
@@ -354,6 +362,7 @@
                            ";led_brightness=" + document.getElementById("led_brightness").value +
                            ";logo_text=" + document.getElementById("logo_text").value +
                            ";speed_limit_offset=" + document.getElementById("speed_limit_offset").value +
+                           ";night_brightness=" + document.getElementById("night_brightness").value +
                            ";welcome_text=" + document.getElementById("welcome_text").value +
                            ";show_text_kmh=" + document.getElementById("show_text_kmh").value +
                            ";obd_scan_duration=" + document.getElementById("obd_scan_duration").value +
