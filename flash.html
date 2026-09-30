@@ -9,6 +9,7 @@
     <title>Nạp firmware ProMax</title>
     <meta name="viewport" content="width=device-width" />
     <meta name="color-scheme" content="dark light" />
+
     <style>
       body {
         font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
@@ -17,87 +18,192 @@
         margin: 0;
         line-height: 1.4;
       }
+
       .content {
         max-width: 600px;
         margin: 0 auto;
         padding: 12px;
       }
+
       h2 {
         margin-top: 2em;
       }
+
       h3 {
         margin-top: 1.5em;
       }
+
       a {
         color: #03a9f4;
       }
+
       .invisible {
         visibility: hidden;
       }
+
       .hidden {
         display: none;
       }
+
       esp-web-install-button[install-unsupported] {
         visibility: inherit;
       }
+
       .content pre {
         max-width: 100%;
         overflow-y: scroll;
       }
+
       .footer {
         margin-top: 24px;
         border-top: 1px solid #ccc;
         padding-top: 24px;
         text-align: center;
       }
+
       .footer .initiative {
         font-style: italic;
         margin-top: 16px;
       }
+
       table {
         border-spacing: 0;
       }
+
       td {
         padding: 8px;
         border-bottom: 1px solid #ccc;
       }
+
+      .radios {
+        padding: 0;
+        margin: 16px 0;
+      }
+
       .radios li {
         list-style: none;
         line-height: 2em;
+        margin: 8px 0;
       }
+
+      .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .radio-option input {
+        width: 18px;
+        height: 18px;
+      }
+
+      .install-button {
+        margin-top: 12px;
+      }
+
       @media (prefers-color-scheme: dark) {
         body {
           background-color: #333;
           color: #fff;
         }
+
         a {
           color: #58a6ff;
         }
       }
     </style>
-    <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+
+    <script type="module"
+      src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module">
+    </script>
+
+    <script>
+      function selectFirmware(manifest) {
+        const installButton = document.querySelector("esp-web-install-button");
+        installButton.setAttribute("manifest", manifest);
+      }
+    </script>
   </head>
+
   <body>
     <div class="content">
       <h1>Nạp firmware ProMax</h1>
-      <p>Cắm ProMax vào máy tính. Ấn nút dưới để nạp firmware mới nhất. </p> 
-      <p class="button-row" align="left">
+
+      <p>
+        Cắm ProMax vào máy tính. Chọn firmware bên dưới rồi ấn nút để nạp
+        firmware mới nhất.
+      </p>
+
+      <ul class="radios">
+        <li>
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="firmware"
+              value="manifest.json"
+              checked
+              onchange="selectFirmware(this.value)"
+            />
+            <span>Hỗ trợ vml và waze mod</span>
+          </label>
+        </li>
+
+        <li>
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="firmware"
+              value="manifest_3in1.json"
+              onchange="selectFirmware(this.value)"
+            />
+            <span>3 trong 1, không kết nối obd</span>
+          </label>
+        </li>
+      </ul>
+
+      <p class="button-row install-button">
         <esp-web-install-button manifest="./manifest.json">
           <button slot="activate">Install</button>
-          <span slot="unsupported">Trình duyệt này không hỗ trợ. Thử dùng chrome trên máy tính</span>
-          <span slot="not-allowed">Ah snap, you are not allowed to use this on HTTP!</span>
+
+          <span slot="unsupported">
+            Trình duyệt này không hỗ trợ. Thử dùng Chrome trên máy tính
+          </span>
+
+          <span slot="not-allowed">
+            Ah snap, you are not allowed to use this on HTTP!
+          </span>
         </esp-web-install-button>
       </p>
 
-    <i>
-      <ul>
-        <li>Sử dụng cáp truyền dữ liệu cắm trực tiếp HUD vào máy tính.</li>
-        <li>Nếu máy tính chỉ có cổng type C: dùng USB hub hoặc adapter.</li>
-        <li>Ở cửa sổ chọn thiết bị: chọn thiết bị có tên USB serial gì gì đó.</li>
-        <li>Nếu không có thiết bị nào như vậy cần cài driver.</li>
-        <li>Link tải driver cho <a href="https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers?tab=downloads" target="_blank" rel="noopener">Windows&Mac</a>,
-                  <a href="https://www.wch.cn/downloads/CH343SER_ZIP.html" target="_blank" rel="noopener">Windows</a>, <a href="https://www.wch.cn/downloads/CH34XSER_MAC_ZIP.html" target="_blank" rel="noopener">Mac</a></li>
-      </ul>  
-    </i>
+      <i>
+        <ul>
+          <li>Sử dụng cáp truyền dữ liệu cắm trực tiếp HUD vào máy tính.</li>
+          <li>Nếu máy tính chỉ có cổng type C: dùng USB hub hoặc adapter.</li>
+          <li>
+            Ở cửa sổ chọn thiết bị: chọn thiết bị có tên USB serial gì gì đó.
+          </li>
+          <li>Nếu không có thiết bị nào như vậy cần cài driver.</li>
+          <li>
+            Link tải driver cho
+            <a
+              href="https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers?tab=downloads"
+              target="_blank"
+              rel="noopener"
+            >Windows&Mac</a>,
+            <a
+              href="https://www.wch.cn/downloads/CH343SER_ZIP.html"
+              target="_blank"
+              rel="noopener"
+            >Windows</a>,
+            <a
+              href="https://www.wch.cn/downloads/CH34XSER_MAC_ZIP.html"
+              target="_blank"
+              rel="noopener"
+            >Mac</a>
+          </li>
+        </ul>
+      </i>
+    </div>
   </body>
 </html>
