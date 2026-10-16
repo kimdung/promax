@@ -604,7 +604,15 @@ function encodeCanvasAsJpegUnderLimit(canvas, maxBytes, resolve, reject) {
                 return;
             }
             if (blob.size <= maxBytes) {
-                blob.arrayBuffer().then(resolve);
+                // Dùng FileReader thay vì blob.arrayBuffer() - FileReader là
+                // API rất cũ, chắc chắn có trên mọi trình duyệt/WebView
+                // (kể cả WKWebView cũ dùng trong app Bluefy trên iPhone),
+                // trong khi Blob.prototype.arrayBuffer() là API mới hơn và
+                // có thể chưa có trên một số bản WebView cũ hơn.
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error || new Error('Không đọc được ảnh đã nén.'));
+                reader.readAsArrayBuffer(blob);
             } else {
                 tryNextQuality();
             }
@@ -646,7 +654,12 @@ async function sendFileBlock(fileContents, bytesSent) {
         await delay(FILE_BLOCK_DELAY_MS);
 
         const blockLength = Math.min(fileContents.byteLength - bytesSent, FILE_BLOCK_SIZE);
-        const block = new Uint8Array(fileContents, bytesSent, blockLength);
+        // .slice() để tạo một Uint8Array ĐỘC LẬP (buffer riêng, byteOffset=0)
+        // thay vì 1 "view" trỏ vào giữa buffer lớn. Một số cầu nối Web
+        // Bluetooth dạng polyfill (như app Bluefy trên iPhone) từng có lỗi
+        // đọc nhầm nguyên buffer gốc từ đầu, bỏ qua byteOffset của view,
+        // khiến dữ liệu gửi đi bị sai/lặp lại từ đầu file.
+        const block = new Uint8Array(fileContents, bytesSent, blockLength).slice();
 
         // writeValue = ghi "có xác nhận", khớp với characteristic 0xFFF3
         // phía firmware (chỉ khai PROPERTY_WRITE, không có WRITE_NR).
