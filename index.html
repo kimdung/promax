@@ -32,9 +32,9 @@
             <button id="connectBleButton" class="connectButton"> Kết nối ProMax (ấn vào đây!!) </button>
         </p>
         <p class="gray-label">Trạng thái kết nối: <strong><span id="bleState" style="color:#d13a30;">Không kết nối</span></strong></p>
-   
+
     </div>
-    
+
     <div id="configBlock" style="display: none;">
     <p>Đọc kỹ chú ý phía cuối trang!</p>
     <p>Đọc kỹ chú ý phía cuối trang!</p>
@@ -162,7 +162,7 @@
                     <input type="text" id="logo_text" maxlength="7" onchange="updateConfig()">
                 </td>
             </tr>
-            
+
             <tr>
                 <td>Cảnh báo tốc độ trễ (3) </td>
                 <td>
@@ -191,12 +191,12 @@
         </table>
         <p>
             <i>
-                1) Ảnh jpeg 240x240, nhở hơn 100KB. ProMax tự khởi động lại khi up thành công <br>
+                1) Chọn ảnh bất kỳ (jpg, png, ...). Trang sẽ tự resize về 240x240 và nén lại dưới 100KB trước khi upload. ProMax tự khởi động lại khi up thành công <br>
                 2) Thời gian đơn vị giây. Tối đa 255 giây. 0 giây tức là không hiện. <br>
                 3) Cảnh báo tốc độ trễ ví dụ tốc độ giới hạn là 50km/h, muốn đi vượt quá 53km/h mới cảnh báo thì nhập 3 <br>
             </i>
         </p>
-        <p>          
+        <p>
         </p>
         <table>
             <tr>
@@ -204,8 +204,8 @@
                 <td>
                     <select id="obd_scan_duration" onchange="updateConfig()">
                         <option value="0">0 (Tắt)</option>
-                        <option value="5">5 (Bật scan 5s)</option>                
-                        <option value="10">10 (Bật scan 10s)</option>                
+                        <option value="5">5 (Bật scan 5s)</option>
+                        <option value="10">10 (Bật scan 10s)</option>
                     </select>
                 </td>
             </tr>
@@ -215,7 +215,7 @@
                 <td>
                     <select id="keep_awake_on_obd" onchange="updateConfig()">
                         <option value="1">1 (Luôn bật)</option>
-                        <option value="0">0 (Chỉ bật khi có kết nối vml)</option>                                        
+                        <option value="0">0 (Chỉ bật khi có kết nối vml)</option>
                     </select>
                 </td>
             </tr>
@@ -231,22 +231,440 @@
                     <input type="number" id="sleep_duration" min="0" onchange="updateConfig()">
                 </td>
             </tr> -->
-        </table>    
-        
+        </table>
+
         <p>
             <button id="sendButton" onclick="send()">Gửi</button> <strong><span id="sendState" style="color:#24af37;"></span></strong>
         </p>
         <p>
             <input type="text" size="140"  id="configOutput" readonly style="display: none;">
         </p>
-        
+
     </p>
 </div>
 </body>
 
 <script>
 
- const _0x431939=_0x5781;(function(_0x490bf1,_0x1eac2e){const _0x3ae217=_0x5781,_0x36dd69=_0x490bf1();while(!![]){try{const _0x3fba1f=-parseInt(_0x3ae217(0x23b))/0x1*(parseInt(_0x3ae217(0x24f))/0x2)+parseInt(_0x3ae217(0x243))/0x3*(-parseInt(_0x3ae217(0x21f))/0x4)+-parseInt(_0x3ae217(0x1f5))/0x5*(-parseInt(_0x3ae217(0x1fb))/0x6)+-parseInt(_0x3ae217(0x1e4))/0x7*(-parseInt(_0x3ae217(0x212))/0x8)+-parseInt(_0x3ae217(0x20b))/0x9+-parseInt(_0x3ae217(0x223))/0xa+parseInt(_0x3ae217(0x244))/0xb;if(_0x3fba1f===_0x1eac2e)break;else _0x36dd69['push'](_0x36dd69['shift']());}catch(_0x2f96d4){_0x36dd69['push'](_0x36dd69['shift']());}}}(_0x5273,0x50770));const connectButton=document[_0x431939(0x1fa)](_0x431939(0x237)),transferFileButton=document[_0x431939(0x1fa)](_0x431939(0x24d)),bleStateContainer=document[_0x431939(0x1fa)](_0x431939(0x208)),percent=document[_0x431939(0x1fa)]('file-transfer-percent'),sendButton=document['getElementById'](_0x431939(0x21c)),brightnessSlider=document[_0x431939(0x1fa)]('led_brightness'),brightnessValue=document[_0x431939(0x1fa)](_0x431939(0x21d)),configBlock=document['getElementById'](_0x431939(0x1e9)),configOutput=document[_0x431939(0x1fa)]('configOutput'),DEVICE_NAME=_0x431939(0x245),SERVICE_UUID=_0x431939(0x1ec),WRITE_CHAR_UUID=_0x431939(0x216),NOTIF_CHAR_UUID=_0x431939(0x211),FILE_BLOCK_UUID='0000fff3-0000-1000-8000-00805f9b34fb',DEVICE_INFO_SERVICE_UUID=_0x431939(0x204),FIRMWARE_CHARACTERISTIC_UUID=_0x431939(0x228);var bleServer,fileBlockCharacteristic,defaultConfig='DTBK;display_rotation=2;show_clock=1;led_color=0xff0000;led_brightness=9;logo_text=MAPVIET;speed_limit_offset=0;welcome_text='+_0x431939(0x20f)+';obd_scan_duration=0'+';night_brightness=5'+';show_speed=1'+';show_number_marker=1'+_0x431939(0x205)+_0x431939(0x1f6)+_0x431939(0x242)+';keep_awake_on_obd=1'+_0x431939(0x250)+';boot_screen_duration=1';!navigator[_0x431939(0x22c)]&&(console[_0x431939(0x225)](_0x431939(0x1e5)),bleStateContainer[_0x431939(0x1fc)]=_0x431939(0x1d8)+_0x431939(0x23c)+_0x431939(0x1f4)+_0x431939(0x1ea),connectButton[_0x431939(0x213)]['display']=_0x431939(0x230));connectButton[_0x431939(0x1ee)](_0x431939(0x1d5),_0x106390=>{const _0x4250ec=_0x431939;connect(),transferFileButton[_0x4250ec(0x1ee)]('click',function(_0x5a98d9){const _0x31414c=_0x4250ec;let _0x792d41=document['createElement'](_0x31414c(0x1fe));_0x792d41[_0x31414c(0x1de)]='file',_0x792d41[_0x31414c(0x1e1)]='image/jpeg',_0x792d41[_0x31414c(0x1ff)]=_0x53a913=>{const _0xc7c476=_0x31414c;let _0x167bb5=Array[_0xc7c476(0x22a)](_0x792d41['files']),_0x67e976=_0x167bb5[0x0],_0x547de9=new FileReader();_0x547de9['onload']=function(_0x56c3a1){const _0x3dc580=_0xc7c476;let _0xb0761a=_0x56c3a1['target'][_0x3dc580(0x24a)],_0x3c0453=new Uint8Array(_0xb0761a);transferFile(_0xb0761a);},_0x547de9[_0xc7c476(0x1dc)](_0x67e976);},_0x792d41[_0x31414c(0x1d5)]();});});function onDisconnected(_0x54e0e7){const _0x20bd7f=_0x431939;bleStateContainer[_0x20bd7f(0x1fc)]=_0x20bd7f(0x221),bleStateContainer['style'][_0x20bd7f(0x23a)]=_0x20bd7f(0x249),configBlock[_0x20bd7f(0x213)][_0x20bd7f(0x232)]=_0x20bd7f(0x230),connectButton[_0x20bd7f(0x213)][_0x20bd7f(0x232)]=_0x20bd7f(0x233);}async function connect(){const _0x4534e4=_0x431939;console[_0x4534e4(0x225)](_0x4534e4(0x229));const _0x1675cf=await navigator[_0x4534e4(0x22c)]['requestDevice']({'filters':[{'name':DEVICE_NAME}],'optionalServices':[SERVICE_UUID,DEVICE_INFO_SERVICE_UUID]});_0x1675cf[_0x4534e4(0x1ee)](_0x4534e4(0x1fd),onDisconnected),console[_0x4534e4(0x225)]('Device\x20Selected:',_0x1675cf['name']),bleStateContainer[_0x4534e4(0x1fc)]=_0x4534e4(0x1d4),bleStateContainer[_0x4534e4(0x213)][_0x4534e4(0x23a)]=_0x4534e4(0x206),console[_0x4534e4(0x225)](_0x4534e4(0x1d7)),bleServer=await _0x1675cf[_0x4534e4(0x1db)][_0x4534e4(0x23e)](),console[_0x4534e4(0x225)](_0x4534e4(0x1e3));const _0x41a977=await bleServer[_0x4534e4(0x22e)](DEVICE_INFO_SERVICE_UUID);console['log']('Getting\x20firmware\x20characteristics\x20...');const _0x259899=await _0x41a977[_0x4534e4(0x226)](FIRMWARE_CHARACTERISTIC_UUID);console[_0x4534e4(0x225)](_0x4534e4(0x246));const _0x56b9a0=await _0x259899['readValue']();console[_0x4534e4(0x225)](_0x4534e4(0x21a),_0x56b9a0);const _0x4e0d9e=new TextDecoder()[_0x4534e4(0x20d)](_0x56b9a0);bleStateContainer[_0x4534e4(0x213)][_0x4534e4(0x23a)]=_0x4534e4(0x240),bleStateContainer[_0x4534e4(0x1fc)]='Đã\x20kết\x20nối\x20với\x20ProMax\x20'+_0x4e0d9e,configBlock['style'][_0x4534e4(0x232)]=_0x4534e4(0x233),console[_0x4534e4(0x225)](_0x4534e4(0x1eb),_0x4e0d9e),parseData(),loadCurrentConfig(),connectButton[_0x4534e4(0x213)][_0x4534e4(0x232)]='none';}async function loadCurrentConfig(){const _0x3a23d5=_0x431939,_0x485e25=await bleServer['getPrimaryService'](SERVICE_UUID),_0x421628=await _0x485e25[_0x3a23d5(0x226)](NOTIF_CHAR_UUID);try{await _0x421628[_0x3a23d5(0x24b)]();}catch(_0x1b6afe){}_0x421628[_0x3a23d5(0x1ee)](_0x3a23d5(0x23d),handleCharacteristicChange),await _0x421628[_0x3a23d5(0x210)](),fileBlockCharacteristic=await _0x485e25[_0x3a23d5(0x226)](FILE_BLOCK_UUID);const _0x30e269=await _0x485e25[_0x3a23d5(0x226)](WRITE_CHAR_UUID),_0x5168a0=_0x3a23d5(0x235),_0x15207b=Uint8Array[_0x3a23d5(0x22a)](_0x5168a0[_0x3a23d5(0x227)]('')[_0x3a23d5(0x22f)](_0x49b217=>_0x49b217[_0x3a23d5(0x209)]()));_0x30e269[_0x3a23d5(0x234)](_0x15207b);}function handleCharacteristicChange(_0x5f16b3){const _0x11227e=_0x431939,_0x56bcc3=new TextDecoder()[_0x11227e(0x20d)](_0x5f16b3['target'][_0x11227e(0x217)]);console['log'](_0x11227e(0x238),_0x56bcc3),_0x56bcc3!=''&&(defaultConfig=_0x56bcc3,parseData());}async function send(){const _0x564086=_0x431939,_0xc5d133=await bleServer['getPrimaryService'](SERVICE_UUID),_0x11b66e=await _0xc5d133[_0x564086(0x226)](WRITE_CHAR_UUID),_0x86fa8c=document['getElementById'](_0x564086(0x20e))['value'],_0x54e5ca=Uint8Array[_0x564086(0x22a)](_0x86fa8c[_0x564086(0x227)]('')[_0x564086(0x22f)](_0x3a7b97=>_0x3a7b97[_0x564086(0x209)]()));await _0x11b66e[_0x564086(0x234)](_0x54e5ca),sendState['innerHTML']=_0x564086(0x1e0),setTimeout(()=>window[_0x564086(0x201)][_0x564086(0x241)](),0xbb8);}function disconnectDevice(){const _0x1a1b4a=_0x431939;console[_0x1a1b4a(0x225)](_0x1a1b4a(0x1f0)),bleServer&&bleServer[_0x1a1b4a(0x1dd)]?(bleServer[_0x1a1b4a(0x222)](),console[_0x1a1b4a(0x225)](_0x1a1b4a(0x231)),bleStateContainer[_0x1a1b4a(0x1fc)]=_0x1a1b4a(0x221),bleStateContainer[_0x1a1b4a(0x213)][_0x1a1b4a(0x23a)]=_0x1a1b4a(0x249),configBlock[_0x1a1b4a(0x213)]['display']='none'):(console[_0x1a1b4a(0x1e7)](_0x1a1b4a(0x1da)),window[_0x1a1b4a(0x214)](_0x1a1b4a(0x1e2)));}function updateConfig(){const _0x1c8384=_0x431939;var _0x4aa0b1=document[_0x1c8384(0x1fa)](_0x1c8384(0x1d3))['value']['replace']('#','0x'),_0x39b005=_0x1c8384(0x239)+document[_0x1c8384(0x1fa)](_0x1c8384(0x248))[_0x1c8384(0x217)]+_0x1c8384(0x215)+document['getElementById']('show_clock')['value']+_0x1c8384(0x219)+_0x4aa0b1+';led_brightness='+document[_0x1c8384(0x1fa)](_0x1c8384(0x1f8))[_0x1c8384(0x217)]+_0x1c8384(0x247)+document[_0x1c8384(0x1fa)](_0x1c8384(0x202))[_0x1c8384(0x217)]+_0x1c8384(0x22d)+document['getElementById'](_0x1c8384(0x20a))[_0x1c8384(0x217)]+';night_brightness='+document[_0x1c8384(0x1fa)](_0x1c8384(0x1f7))['value']+_0x1c8384(0x203)+document[_0x1c8384(0x1fa)](_0x1c8384(0x1ef))['value']+_0x1c8384(0x24e)+document[_0x1c8384(0x1fa)](_0x1c8384(0x1d2))[_0x1c8384(0x217)]+_0x1c8384(0x220)+document[_0x1c8384(0x1fa)](_0x1c8384(0x1e8))[_0x1c8384(0x217)]+_0x1c8384(0x236)+document[_0x1c8384(0x1fa)](_0x1c8384(0x1e6))['value']+_0x1c8384(0x200)+document['getElementById'](_0x1c8384(0x1f2))[_0x1c8384(0x217)]+_0x1c8384(0x20c)+document['getElementById'](_0x1c8384(0x21b))[_0x1c8384(0x217)]+_0x1c8384(0x1ed)+document[_0x1c8384(0x1fa)]('screen')[_0x1c8384(0x217)]+';sleep_screen_mode='+document[_0x1c8384(0x1fa)]('sleep_screen_mode')[_0x1c8384(0x217)]+_0x1c8384(0x1f3)+document['getElementById']('keep_awake_on_obd')[_0x1c8384(0x217)]+';show_weather='+document[_0x1c8384(0x1fa)](_0x1c8384(0x224))[_0x1c8384(0x217)]+';boot_screen_duration='+document[_0x1c8384(0x1fa)](_0x1c8384(0x1d9))[_0x1c8384(0x217)];configOutput[_0x1c8384(0x217)]=_0x39b005;}function _0x5781(_0x6cc2e0,_0x47c49a){const _0x5273fc=_0x5273();return _0x5781=function(_0x578121,_0x375b46){_0x578121=_0x578121-0x1d2;let _0x37a316=_0x5273fc[_0x578121];return _0x37a316;},_0x5781(_0x6cc2e0,_0x47c49a);}function parseData(){const _0x59a78a=_0x431939;configOutput['value']=defaultConfig;var _0x1fec37=configOutput[_0x59a78a(0x217)];_0x1fec37[_0x59a78a(0x227)](';')[_0x59a78a(0x21e)](function(_0x1b2a33){const _0x4ab72a=_0x59a78a;var _0x305a30=_0x1b2a33[_0x4ab72a(0x227)]('=');console[_0x4ab72a(0x225)](_0x4ab72a(0x1f1)+_0x305a30[0x0]+_0x4ab72a(0x207)+_0x305a30[0x1]);var _0x1fa2bd=document[_0x4ab72a(0x1fa)](_0x305a30[0x0]);typeof _0x1fa2bd!=_0x4ab72a(0x1f9)&&_0x1fa2bd!=null&&(_0x305a30[0x0]==_0x4ab72a(0x1d3)?_0x1fa2bd[_0x4ab72a(0x217)]=_0x305a30[0x1]['replace']('0x','#'):_0x1fa2bd[_0x4ab72a(0x217)]=_0x305a30[0x1]);});}function _0x5273(){const _0x28cd93=['night_brightness','led_brightness','undefined','getElementById','1362HpPQZn','innerHTML','gattserverdisconnected','input','onchange',';show_number_marker=','location','logo_text',';welcome_text=','0000180a-0000-1000-8000-00805f9b34fb',';beep_limit_change=0','#242237','\x20value\x20=\x20','bleState','charCodeAt','speed_limit_offset','1294722SayjyG',';beep_limit_change=','decode','configOutput',';show_text_kmh=1','startNotifications','0000fff1-0000-1000-8000-00805f9b34fb','4251784chuvPV','style','alert',';show_clock=','0000fff2-0000-1000-8000-00805f9b34fb','value','DTBK',';led_color=','Read\x20value:\x20','beep_limit_change','sendButton','brightness_value','forEach','316eKTXJa',';show_speed=','Không\x20kết\x20nối','disconnect','6197980eHIMTb','show_weather','log','getCharacteristic','split','00002a26-0000-1000-8000-00805f9b34fb','Initializing\x20Bluetooth...','from','\x20bytes\x20but\x20maximum\x20is\x20','bluetooth',';speed_limit_offset=','getPrimaryService','map','none','Device\x20Disconnected','display','block','writeValueWithoutResponse','LOAD',';obd_scan_duration=','connectBleButton','Current\x20config\x20value:\x20','DTBK;display_rotation=','color','2882ziEHhq','Thử\x20mở\x20trang\x20này\x20bằng\x20máy\x20tính\x20và\x20trình\x20duyệt\x20Chrome).<br>','characteristicvaluechanged','connect','round','#24af37','reload',';sleep_screen_mode=1','2103cwlSEd','6508271iLWmfa','VIETMAP_HUD','Try\x20to\x20read\x20revision\x20value',';logo_text=','display_rotation','#d13a30','result','stopNotifications','min','transfer-file-button',';show_text_kmh=','186mDJnJv',';show_weather=1','show_text_kmh','led_color','Đang\x20kết\x20nối\x20với\x20ProMax\x20','click','byteLength','Connecting\x20to\x20device\x20...','Trình\x20duyệt\x20này\x20(thiết\x20bị\x20này)\x20không\x20hỗ\x20trợ!<br>\x20','boot_screen_duration','Bluetooth\x20is\x20not\x20connected.','gatt','readAsArrayBuffer','connected','type','File\x20length\x20is\x20too\x20long:\x20','Đã\x20gửi!\x20Reload\x20sau\x203s','accept','Chưa\x20kết\x20nối\x20với\x20thiết\x20bị\x20Bluetooth.','Getting\x20device\x20info\x20service\x20...','7XdzzOZ','Web\x20Bluetooth\x20API\x20is\x20not\x20available\x20in\x20this\x20browser!','obd_scan_duration','error','show_speed','configBlock','Hoặc\x20thử\x20cài\x20ứng\x20dụng\x20<a\x20href=\x22https://apps.apple.com/us/app/bluefy-web-ble-browser/id1492822055\x22>Bluefy</a>\x20trên\x20iPhone\x20và\x20dùng\x20nó\x20để\x20mở\x20lại\x20trang\x20này.','Decoded\x20value:\x20','0000fff0-0000-1000-8000-00805f9b34fb',';screen=','addEventListener','welcome_text','Disconnect\x20Device.','key\x20=\x20','show_number_marker',';keep_awake_on_obd=','Hoặc\x20thử\x20mở\x20trang\x20này\x20bằng\x20điện\x20thoại\x20Android.\x20<br>','6465vnaPdJ',';screen=0'];_0x5273=function(){return _0x28cd93;};return _0x5273();}async function transferFile(_0x353597){const _0x433909=_0x431939;let _0x30dbfc=0x64*0x400;if(_0x353597[_0x433909(0x1d6)]>_0x30dbfc){console['error'](_0x433909(0x1df)+_0x353597[_0x433909(0x1d6)]+_0x433909(0x22b)+_0x30dbfc);return;}transferFileButton['style'][_0x433909(0x232)]=_0x433909(0x230),sendButton['style']['display']=_0x433909(0x230),percent[_0x433909(0x213)][_0x433909(0x232)]=_0x433909(0x233),sendFileBlock(_0x353597,0x0);}const delay=_0x4f611e=>{return new Promise(_0x3e19be=>setTimeout(_0x3e19be,_0x4f611e));};async function sendFileBlock(_0x321a19,_0x5e23c2){const _0x2dcd3d=_0x431939;await delay(0x64);let _0x1a56e3=_0x321a19['byteLength']-_0x5e23c2;const _0x5c51d3=0x80,_0x11e519=Math[_0x2dcd3d(0x24c)](_0x1a56e3,_0x5c51d3),_0xb69fc8=new Uint8Array(_0x321a19,_0x5e23c2,_0x11e519);await fileBlockCharacteristic['writeValue'](_0xb69fc8),_0x1a56e3-=_0x11e519;_0x1a56e3>0x0&&(percent['innerHTML']=Math[_0x2dcd3d(0x23f)](0x64*(_0x5e23c2/_0x321a19['byteLength']))+'%',_0x5e23c2+=_0x11e519,sendFileBlock(_0x321a19,_0x5e23c2));if(_0x1a56e3<=0x0){transferFileButton['style'][_0x2dcd3d(0x232)]=_0x2dcd3d(0x233),sendButton[_0x2dcd3d(0x213)][_0x2dcd3d(0x232)]='block',percent[_0x2dcd3d(0x213)][_0x2dcd3d(0x232)]=_0x2dcd3d(0x230);const _0x41f70c=_0x2dcd3d(0x218),_0x1410cb=Uint8Array[_0x2dcd3d(0x22a)](_0x41f70c[_0x2dcd3d(0x227)]('')[_0x2dcd3d(0x22f)](_0xe7ae31=>_0xe7ae31[_0x2dcd3d(0x209)]()));fileBlockCharacteristic['writeValueWithoutResponse'](_0x1410cb);}}
+// =====================================================================
+// CẤU HÌNH GIAO THỨC BLE CỦA PROMAX
+// ---------------------------------------------------------------------
+// ProMax (firmware VietMap_HUD) phát 1 service BLE chính "0xFFF0" gồm
+// 3 characteristic:
+//   - 0xFFF1 (NOTIFY) : ProMax -> web, dùng để trả cấu hình hiện tại
+//   - 0xFFF2 (WRITE)  : web -> ProMax, dùng để gửi lệnh text:
+//       "LOAD"            -> yêu cầu ProMax trả cấu hình hiện tại qua 0xFFF1
+//       "DTBK;key=value;" -> ghi đè cấu hình rồi ProMax tự khởi động lại
+//   - 0xFFF3 (WRITE)  : web -> ProMax, dùng để truyền ảnh logo theo từng
+//                        khối (block) 128 byte. Khi xong, gửi thêm 4 byte
+//                        "DTBK" để báo kết thúc file.
+// Ngoài ra còn service Device Info (0x180A) chuẩn Bluetooth, dùng để đọc
+// version firmware (0x2A26) ngay sau khi kết nối.
+// =====================================================================
+
+const DEVICE_NAME = 'VIETMAP_HUD';
+const SERVICE_UUID = '0000fff0-0000-1000-8000-00805f9b34fb';
+const WRITE_CHAR_UUID = '0000fff2-0000-1000-8000-00805f9b34fb';
+const NOTIF_CHAR_UUID = '0000fff1-0000-1000-8000-00805f9b34fb';
+const FILE_BLOCK_UUID = '0000fff3-0000-1000-8000-00805f9b34fb';
+const DEVICE_INFO_SERVICE_UUID = '0000180a-0000-1000-8000-00805f9b34fb';
+const FIRMWARE_CHARACTERISTIC_UUID = '00002a26-0000-1000-8000-00805f9b34fb';
+
+// Chuỗi 4 ký tự dùng làm "từ khoá" cho 3 việc khác nhau tuỳ theo
+// characteristic nhận nó: xin cấu hình (LOAD), ghi cấu hình mới (DTBK ở
+// đầu chuỗi config) và báo kết thúc truyền ảnh (DTBK gửi riêng qua 0xFFF3).
+const CMD_LOAD_CONFIG = 'LOAD';
+const CMD_END_OF_FILE = 'DTBK';
+
+// Giới hạn ảnh logo mà màn hình ProMax (thư viện TJpg_Decoder) vẽ được
+const LOGO_WIDTH = 240;
+const LOGO_HEIGHT = 240;
+const LOGO_MAX_BYTES = 100 * 1024; // 100KB
+
+// Mỗi lần ghi BLE chỉ nên gửi một khối nhỏ (an toàn hơn so với MTU tối đa)
+const FILE_BLOCK_SIZE = 128;
+const FILE_BLOCK_DELAY_MS = 100; // nghỉ giữa 2 lần ghi để ProMax xử lý kịp
+
+// Cấu hình mặc định, dùng để hiển thị tạm trong lúc chưa đọc được cấu hình
+// thật từ ProMax (sẽ bị ghi đè ngay sau khi kết nối thành công).
+let defaultConfig =
+    'DTBK;display_rotation=2;show_clock=1;led_color=0xff0000;led_brightness=9;' +
+    'logo_text=MAPVIET;speed_limit_offset=0;welcome_text=;show_text_kmh=1;' +
+    'obd_scan_duration=0;night_brightness=5;show_speed=1;show_number_marker=1;' +
+    'beep_limit_change=0;screen=0;sleep_screen_mode=1;keep_awake_on_obd=1;' +
+    'show_weather=1;boot_screen_duration=1';
+
+// ----- Tham chiếu tới các phần tử trên trang -----
+const connectButton = document.getElementById('connectBleButton');
+const transferFileButton = document.getElementById('transfer-file-button');
+const bleStateContainer = document.getElementById('bleState');
+const percentLabel = document.getElementById('file-transfer-percent');
+const sendButton = document.getElementById('sendButton');
+const sendState = document.getElementById('sendState');
+const configBlock = document.getElementById('configBlock');
+const configOutput = document.getElementById('configOutput');
+
+// ----- Trạng thái kết nối BLE hiện tại -----
+let bleServer = null;
+let fileBlockCharacteristic = null;
+
+// =====================================================================
+// KIỂM TRA TRÌNH DUYỆT CÓ HỖ TRỢ WEB BLUETOOTH KHÔNG
+// =====================================================================
+if (!navigator.bluetooth) {
+    console.log('Web Bluetooth API is not available in this browser!');
+    bleStateContainer.innerHTML =
+        'Trình duyệt này (thiết bị này) không hỗ trợ!<br> ' +
+        'Thử mở trang này bằng máy tính và trình duyệt Chrome).<br>' +
+        'Hoặc thử mở trang này bằng điện thoại Android. <br>' +
+        'Hoặc thử cài ứng dụng <a href="https://apps.apple.com/us/app/bluefy-web-ble-browser/id1492822055">Bluefy</a> trên iPhone và dùng nó để mở lại trang này.';
+    connectButton.style.display = 'none';
+}
+
+// =====================================================================
+// KẾT NỐI / NGẮT KẾT NỐI BLE
+// =====================================================================
+
+connectButton.addEventListener('click', connect);
+
+function onDisconnected() {
+    bleStateContainer.innerHTML = 'Không kết nối';
+    bleStateContainer.style.color = '#d13a30';
+    configBlock.style.display = 'none';
+    connectButton.style.display = 'block';
+    bleServer = null;
+    fileBlockCharacteristic = null;
+}
+
+async function connect() {
+    console.log('Initializing Bluetooth...');
+
+    const device = await navigator.bluetooth.requestDevice({
+        filters: [{ name: DEVICE_NAME }],
+        optionalServices: [SERVICE_UUID, DEVICE_INFO_SERVICE_UUID],
+    });
+    device.addEventListener('gattserverdisconnected', onDisconnected);
+
+    console.log('Device Selected:', device.name);
+    bleStateContainer.innerHTML = 'Đang kết nối với ProMax ';
+    bleStateContainer.style.color = '#242237';
+
+    bleServer = await device.gatt.connect();
+
+    // Đọc version firmware để hiển thị cho người dùng biết đã kết nối đúng máy
+    const deviceInfoService = await bleServer.getPrimaryService(DEVICE_INFO_SERVICE_UUID);
+    const firmwareCharacteristic = await deviceInfoService.getCharacteristic(FIRMWARE_CHARACTERISTIC_UUID);
+    const firmwareRawValue = await firmwareCharacteristic.readValue();
+    const firmwareVersion = new TextDecoder().decode(firmwareRawValue);
+
+    bleStateContainer.style.color = '#24af37';
+    bleStateContainer.innerHTML = 'Đã kết nối với ProMax ' + firmwareVersion;
+    configBlock.style.display = 'block';
+    connectButton.style.display = 'none';
+
+    // Hiện tạm cấu hình mặc định, rồi xin cấu hình thật từ ProMax
+    parseData();
+    await loadCurrentConfig();
+}
+
+function disconnectDevice() {
+    if (bleServer && bleServer.connected) {
+        bleServer.disconnect();
+    } else {
+        window.alert('Chưa kết nối với thiết bị Bluetooth.');
+    }
+}
+
+// Gửi một chuỗi text thuần (ASCII) vào 1 characteristic, dùng writeValue
+// (có xác nhận - "with response") cho tất cả các lệnh quan trọng.
+async function writeTextCommand(characteristic, text) {
+    const bytes = Uint8Array.from(text.split('').map((ch) => ch.charCodeAt(0)));
+    await characteristic.writeValue(bytes);
+}
+
+// =====================================================================
+// ĐỌC / GỬI CẤU HÌNH (bảng tuỳ biến phía trên)
+// =====================================================================
+
+// Sau khi kết nối: lắng nghe thông báo cấu hình từ ProMax, rồi xin ProMax
+// gửi cấu hình hiện tại (lệnh "LOAD") để điền sẵn vào form.
+async function loadCurrentConfig() {
+    const service = await bleServer.getPrimaryService(SERVICE_UUID);
+
+    // Một số bản firmware thiếu descriptor CCCD (0x2902) trên
+    // characteristic NOTIFY này, khiến startNotifications() báo lỗi
+    // "NotSupportedError: GATT Error: Not supported." Bắt lỗi ở đây để
+    // các bước quan trọng hơn phía dưới (xin "LOAD", lấy characteristic
+    // ghi ảnh cho upload logo) vẫn chạy được, dù không nhận được cấu
+    // hình tự động từ ProMax (form sẽ giữ giá trị mặc định).
+    try {
+        const notifCharacteristic = await service.getCharacteristic(NOTIF_CHAR_UUID);
+        notifCharacteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
+        await notifCharacteristic.startNotifications();
+    } catch (err) {
+        console.warn('Không bật được thông báo cấu hình từ ProMax (có thể do firmware thiếu CCCD descriptor):', err);
+    }
+
+    // Giữ sẵn characteristic ghi ảnh để dùng lại lúc upload logo
+    fileBlockCharacteristic = await service.getCharacteristic(FILE_BLOCK_UUID);
+
+    const writeCharacteristic = await service.getCharacteristic(WRITE_CHAR_UUID);
+    await writeTextCommand(writeCharacteristic, CMD_LOAD_CONFIG);
+}
+
+// ProMax trả cấu hình hiện tại qua characteristic NOTIFY dạng text:
+// "DTBK;display_rotation=2;show_clock=1;...". Chuỗi này có thể dài hơn 1
+// gói BLE (tuỳ MTU), nên firmware (notifyChunked()) tách nó thành NHIỀU
+// gói NOTIFY riêng gửi liên tiếp - mỗi lần sự kiện này nổ ra chỉ là MỘT
+// khúc, không phải toàn bộ chuỗi.
+//
+// Vì không có tín hiệu "đã gửi xong" rõ ràng, ta gộp (buffer) các khúc
+// nhận được, và chỉ coi là nhận đủ khi không có khúc mới nào tới trong
+// một khoảng ngắn (debounce) - firmware gửi các khúc cách nhau 10ms nên
+// 200ms là đủ an toàn để biết đã hết.
+let configReceiveBuffer = '';
+let configReceiveIdleTimer = null;
+const CONFIG_RECEIVE_IDLE_MS = 200;
+
+function handleCharacteristicChange(event) {
+    const chunkText = new TextDecoder().decode(event.target.value);
+    configReceiveBuffer += chunkText;
+
+    clearTimeout(configReceiveIdleTimer);
+    configReceiveIdleTimer = setTimeout(() => {
+        const configText = configReceiveBuffer;
+        configReceiveBuffer = '';
+        console.log('Current config value: ', configText);
+        if (configText !== '') {
+            defaultConfig = configText;
+            parseData();
+        }
+    }, CONFIG_RECEIVE_IDLE_MS);
+}
+
+// Đọc chuỗi defaultConfig và điền giá trị vào từng ô input/select tương ứng
+// (mỗi "key=value" trong chuỗi khớp với 1 phần tử có id = key)
+function parseData() {
+    configOutput.value = defaultConfig;
+
+    defaultConfig.split(';').forEach((pair) => {
+        const [key, value] = pair.split('=');
+        const element = document.getElementById(key);
+        if (!element) return; // ví dụ "DTBK" ở đầu chuỗi không khớp id nào, bỏ qua
+
+        // led_color lưu dạng "0xff0000", input type=color cần dạng "#ff0000"
+        element.value = key === 'led_color' ? value.replace('0x', '#') : value;
+    });
+}
+
+// Gom giá trị tất cả ô trong form thành 1 chuỗi "DTBK;key=value;..." để gửi đi
+function updateConfig() {
+    const ledColorHex = document.getElementById('led_color').value.replace('#', '0x');
+
+    const configString =
+        'DTBK' +
+        ';display_rotation=' + document.getElementById('display_rotation').value +
+        ';show_clock=' + document.getElementById('show_clock').value +
+        ';led_color=' + ledColorHex +
+        ';led_brightness=' + document.getElementById('led_brightness').value +
+        ';logo_text=' + document.getElementById('logo_text').value +
+        ';speed_limit_offset=' + document.getElementById('speed_limit_offset').value +
+        ';night_brightness=' + document.getElementById('night_brightness').value +
+        ';welcome_text=' + document.getElementById('welcome_text').value +
+        ';show_text_kmh=' + document.getElementById('show_text_kmh').value +
+        ';show_speed=' + document.getElementById('show_speed').value +
+        ';obd_scan_duration=' + document.getElementById('obd_scan_duration').value +
+        ';show_number_marker=' + document.getElementById('show_number_marker').value +
+        ';beep_limit_change=' + document.getElementById('beep_limit_change').value +
+        ';screen=' + document.getElementById('screen').value +
+        ';sleep_screen_mode=' + document.getElementById('sleep_screen_mode').value +
+        ';keep_awake_on_obd=' + document.getElementById('keep_awake_on_obd').value +
+        ';show_weather=' + document.getElementById('show_weather').value +
+        ';boot_screen_duration=' + document.getElementById('boot_screen_duration').value;
+
+    configOutput.value = configString;
+}
+
+// Nút "Gửi": ghi chuỗi cấu hình vào ProMax. ProMax nhận diện tiền tố "DTBK"
+// và tự khởi động lại để áp dụng cấu hình mới.
+async function send() {
+    const service = await bleServer.getPrimaryService(SERVICE_UUID);
+    const writeCharacteristic = await service.getCharacteristic(WRITE_CHAR_UUID);
+
+    await writeTextCommand(writeCharacteristic, configOutput.value);
+
+    sendState.innerHTML = 'Đã gửi! Reload sau 3s';
+    setTimeout(() => window.location.reload(), 3000);
+}
+
+// =====================================================================
+// UPLOAD ẢNH LOGO (màn hình khởi động / màn chờ)
+// ---------------------------------------------------------------------
+// ProMax dùng thư viện TJpg_Decoder để vẽ ảnh, thư viện này chỉ đọc được
+// JPEG kiểu "baseline" (không đọc được JPEG "progressive", không đọc
+// được PNG/WEBP...) và cần đúng khung 240x240, nhỏ hơn 100KB.
+//
+// Vì vậy, thay vì bắt người dùng tự chuẩn bị đúng file JPEG 240x240, ta
+// cho chọn ảnh bất kỳ rồi tự xử lý bằng <canvas>:
+//   1) Vẽ ảnh vào canvas 240x240 theo kiểu "cover" (giữ đúng tỉ lệ ảnh
+//      gốc, cắt bớt phần dư ra ngoài khung - giống "object-fit: cover").
+//   2) Xuất canvas ra JPEG bằng canvas.toBlob('image/jpeg', quality).
+//      Trình duyệt luôn xuất JPEG baseline khi làm theo cách này, nên
+//      chắc chắn ProMax đọc được, bất kể ảnh gốc là JPEG/PNG/WEBP...
+//   3) Nếu ảnh nén xong vẫn còn to hơn 100KB, giảm dần quality và nén
+//      lại cho tới khi đủ nhỏ.
+// =====================================================================
+
+// Chỉ gắn 1 lần duy nhất (không gắn lại mỗi khi bấm nút Kết nối, tránh
+// bị gọi upload nhiều lần chỉ vì 1 click do bug cũ).
+transferFileButton.addEventListener('click', onClickUploadLogo);
+
+function onClickUploadLogo() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*'; // cho chọn ảnh bất kỳ, sẽ tự convert bên dưới
+
+    fileInput.onchange = async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        try {
+            showUploadStatus('Đang xử lý ảnh...');
+            const jpegArrayBuffer = await convertImageToLogoJpeg(file);
+            await transferFile(jpegArrayBuffer);
+        } catch (err) {
+            console.error(err);
+            window.alert(err.message || 'Có lỗi khi xử lý/upload ảnh.');
+            resetUploadUi();
+        }
+    };
+
+    fileInput.click();
+}
+
+// Đọc 1 file ảnh bất kỳ, trả về ArrayBuffer chứa JPEG 240x240 < 100KB
+function convertImageToLogoJpeg(file) {
+    return new Promise((resolve, reject) => {
+        const image = new Image();
+        const objectUrl = URL.createObjectURL(file);
+
+        image.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            try {
+                const canvas = cropImageToSquareCanvas(image, LOGO_WIDTH, LOGO_HEIGHT);
+                encodeCanvasAsJpegUnderLimit(canvas, LOGO_MAX_BYTES, resolve, reject);
+            } catch (err) {
+                reject(err);
+            }
+        };
+
+        image.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error('Không đọc được file ảnh này. Hãy thử ảnh JPEG hoặc PNG khác.'));
+        };
+
+        // Lưu ý: không đọc EXIF orientation, ảnh chụp bị xoay từ một số
+        // điện thoại có thể hiển thị sai chiều trên ProMax.
+        image.src = objectUrl;
+    });
+}
+
+// Vẽ ảnh vào canvas kích thước targetWidth x targetHeight theo kiểu "cover"
+function cropImageToSquareCanvas(image, targetWidth, targetHeight) {
+    const canvas = document.createElement('canvas');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const ctx = canvas.getContext('2d');
+
+    const scale = Math.max(targetWidth / image.width, targetHeight / image.height);
+    const drawWidth = image.width * scale;
+    const drawHeight = image.height * scale;
+    const offsetX = (targetWidth - drawWidth) / 2;
+    const offsetY = (targetHeight - drawHeight) / 2;
+
+    ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+    return canvas;
+}
+
+// Thử nén canvas thành JPEG, giảm dần chất lượng cho tới khi <= maxBytes
+function encodeCanvasAsJpegUnderLimit(canvas, maxBytes, resolve, reject) {
+    const qualitySteps = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3];
+    let stepIndex = 0;
+
+    function tryNextQuality() {
+        if (stepIndex >= qualitySteps.length) {
+            reject(new Error('Không nén được ảnh xuống dưới 100KB, hãy chọn ảnh đơn giản hơn.'));
+            return;
+        }
+        const quality = qualitySteps[stepIndex++];
+
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                reject(new Error('Trình duyệt này không hỗ trợ xuất ảnh JPEG.'));
+                return;
+            }
+            if (blob.size <= maxBytes) {
+                blob.arrayBuffer().then(resolve);
+            } else {
+                tryNextQuality();
+            }
+        }, 'image/jpeg', quality);
+    }
+
+    tryNextQuality();
+}
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function showUploadStatus(text) {
+    transferFileButton.style.display = 'none';
+    sendButton.style.display = 'none';
+    percentLabel.style.display = 'block';
+    percentLabel.innerHTML = text;
+}
+
+function resetUploadUi() {
+    transferFileButton.style.display = 'block';
+    sendButton.style.display = 'block';
+    percentLabel.style.display = 'none';
+}
+
+async function transferFile(fileContents) {
+    // Kiểm tra lại cho chắc, dù convertImageToLogoJpeg() đã đảm bảo điều này
+    if (fileContents.byteLength > LOGO_MAX_BYTES) {
+        throw new Error('File length is too long: ' + fileContents.byteLength + ' bytes but maximum is ' + LOGO_MAX_BYTES);
+    }
+
+    showUploadStatus('0%');
+    await sendFileBlock(fileContents, 0);
+}
+
+// Gửi ảnh cho ProMax theo từng khối nhỏ (FILE_BLOCK_SIZE byte), rồi báo
+// kết thúc bằng cách gửi riêng 4 byte "DTBK".
+async function sendFileBlock(fileContents, bytesSent) {
+    while (bytesSent < fileContents.byteLength) {
+        await delay(FILE_BLOCK_DELAY_MS);
+
+        const blockLength = Math.min(fileContents.byteLength - bytesSent, FILE_BLOCK_SIZE);
+        const block = new Uint8Array(fileContents, bytesSent, blockLength);
+
+        // writeValue = ghi "có xác nhận", khớp với characteristic 0xFFF3
+        // phía firmware (chỉ khai PROPERTY_WRITE, không có WRITE_NR).
+        await fileBlockCharacteristic.writeValue(block);
+
+        bytesSent += blockLength;
+        percentLabel.innerHTML = Math.round((100 * bytesSent) / fileContents.byteLength) + '%';
+    }
+
+    resetUploadUi();
+
+    // Báo kết thúc file bằng CÙNG kiểu ghi "có xác nhận" như các khối ảnh
+    // phía trên (trước đây dùng writeValueWithoutResponse, không hợp lệ
+    // với characteristic chỉ khai PROPERTY_WRITE nên có thể bị trình
+    // duyệt từ chối, khiến ProMax không nhận được tín hiệu kết thúc).
+    await writeTextCommand(fileBlockCharacteristic, CMD_END_OF_FILE);
+}
+
 </script>
 
 </html>
